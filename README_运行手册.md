@@ -27,6 +27,7 @@ TJMM/
     polish_ils.py          # 多链 ILS 打磨(从第二层/第一层解出发多链搜索,回写最优)
     p1_milp.py <Case> <N>  # 问题1 第一层: MTZ 精确模型(scipy/HiGHS),小规模验证 + 限时求解试点
     _test_ga.py            # GA 冒烟测试(分割DP vs 暴力DP 对照等)
+    _test_sym.py           # 对称性破缺专项测试(副本重排无损性、规范化多重集)
     _verify_ga.py          # GA 结果独立复核(直读 JSON+附件1 重算,支持文件名模式参数)
     _fuzz_ls.py            # 局部搜索算子时间一致性 fuzz 回归(曾定位 2-opt* off-by-one)
     _fuzz_ils.py           # ejection/deep_ls/ils 任务多重集 + 时间一致性 fuzz 回归
@@ -86,6 +87,7 @@ python src\sensitivity.py
 3. 模块可安全 import(主流程均在 `main()` 中,`__main__` 守卫)。
 4. 问题3 的禁飞区边界约定:开圆(相切/压线允许);Case4 Z8 零长度窗口按瞬时生效,另有敏感性对照。
 5. 局部搜索曾有两个 off-by-one 缺陷,均已修复并由 fuzz 回归:①2-opt\* 的前缀和与切片内部距离差一条边界边(`_fuzz_ls.py` 定位);②Or-opt(机内/跨机块搬迁)的块内距离应为 pref[p+b]−pref[p+1](`_fuzz_ils.py` 定位,配合任务多重集检查)。两层与 ACO 结果均已按修复后代码重跑并经独立复核。
+6. 对称性破缺:等级展开产生的同点副本按"出现顺序"规范重编号(排列编码/簇编码在评估时规范化、ACO 构造时按点选代表),严格无损,冗余度(∏ k_i!)压缩为 1;见 `_test_sym.py` 与 docs/11。
 
 ## 诚实性声明(不回避)
 
