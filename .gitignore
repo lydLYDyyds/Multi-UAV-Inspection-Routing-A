@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pkl
+
+# Office 临时文件
+~$*.xlsx
+
+# 调试脚本与中间产物
+src/_*.py
+
+# 求解日志与过程备份(最终结果见 p1/p2/p3_*.json 与 result1-3.xlsx)
+A 题/output/*.log
+A 题/output/p2bin_*.json
+A 题/output/p2_grid_*.json
+A 题/output/p3tex_*.json
+A 题/output/p3alns_*.json
+A 题/output/p3_old_*.json
+A 题/output/p3_loose_*.json
+A 题/output/p3_prealns_*.json
+A 题/output/ga_p1_*.json
+
+# 文本提取中间文件
+pdf_text.txt
+A 题/docs/pdf_extract_统一模型.txt

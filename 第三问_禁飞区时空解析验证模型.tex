@@ -1,0 +1,211 @@
+
+\documentclass[UTF8]{ctexart}
+
+\usepackage{amsmath,amssymb,bm}
+\usepackage{geometry}
+\geometry{a4paper,margin=2.5cm}
+
+\title{动态禁飞区时空解析验证模型}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{建模思想}
+
+对于任意两个巡检任务节点 $i,j$，考虑无人机从节点 $i$ 到节点 $j$ 的飞行航段。
+动态禁飞区同时具有空间约束和时间约束，因此产生冲突需要同时满足：
+
+\begin{enumerate}
+    \item 无人机轨迹进入禁飞区域；
+    \item 进入禁飞区域的时间位于禁飞时间窗口内。
+\end{enumerate}
+
+因此建立空间--时间联合约束模型。
+
+\section{航段轨迹参数化}
+
+设无人机由节点
+\[
+A=(x_i,y_i)
+\]
+飞往
+\[
+B=(x_j,y_j).
+\]
+
+航段长度：
+
+\[
+L_{ij}=\sqrt{(x_j-x_i)^2+(y_j-y_i)^2}.
+\]
+
+若采用原始坐标单位，则无人机速度为：
+
+\[
+v=55\mathrm{km/h}=550\text{坐标单位}/h.
+\]
+
+因此飞行时间：
+
+\[
+\tau_{ij}=\frac{L_{ij}}{550}.
+\]
+
+令无人机出发时刻为 $t_i$，定义轨迹参数：
+
+\[
+\bm p(\lambda)=
+\bm A+\lambda(\bm B-\bm A),
+\qquad 0\leq\lambda\leq1 .
+\]
+
+对应时间：
+
+\[
+t=t_i+\lambda\tau_{ij}.
+\]
+
+该参数化保证无人机沿直线匀速飞行。
+
+\section{空间冲突解析判断}
+
+设圆形禁飞区：
+
+\[
+\Omega_q=
+\{(x,y):\|\bm p-\bm c_q\|\leq R_q\}.
+\]
+
+其中圆心：
+
+\[
+\bm c_q=(x_q,y_q).
+\]
+
+判断航段与禁飞区边界：
+
+\[
+\|\bm p(\lambda)-\bm c_q\|^2=R_q^2.
+\]
+
+展开得到二次方程：
+
+\[
+a\lambda^2+b\lambda+c=0,
+\]
+
+其中：
+
+\[
+a=(\bm B-\bm A)\cdot(\bm B-\bm A),
+\]
+
+\[
+b=2(\bm A-\bm c_q)\cdot(\bm B-\bm A),
+\]
+
+\[
+c=(\bm A-\bm c_q)\cdot(\bm A-\bm c_q)-R_q^2.
+\]
+
+求解得到交点参数
+$\lambda_1,\lambda_2$。
+
+若：
+
+\[
+[\lambda_1,\lambda_2]\cap[0,1]\neq\varnothing,
+\]
+
+则该航段在空间上进入禁飞区域。
+
+\section{时间冲突判断}
+
+由空间交点得到进入和离开禁飞区的时间：
+
+\[
+t_1=t_i+\lambda_1\tau_{ij},
+\]
+
+\[
+t_2=t_i+\lambda_2\tau_{ij}.
+\]
+
+设禁飞时间窗口：
+
+\[
+T_q=[T_q^{s},T_q^{e}],
+\]
+
+则动态冲突条件为：
+
+\[
+[t_1,t_2]\cap[T_q^s,T_q^e]\neq\varnothing.
+\]
+
+即：
+
+\[
+\boxed{
+\text{空间相交}
++
+\text{时间相交}
+=
+\text{禁飞冲突}
+}
+\]
+
+\section{动态航段代价}
+
+定义：
+
+\[
+\widetilde{\tau}_{ij}(t)
+\]
+
+表示无人机在时刻 $t$ 从节点 $i$ 到节点 $j$
+的最短合法飞行时间。
+
+第一、二问：
+
+\[
+\tau_{ij}=\frac{d_{ij}}{55}.
+\]
+
+第三问：
+
+\[
+\widetilde{\tau}_{ij}(t)
+=
+\min
+\{
+\tau_{\mathrm{direct}},
+\tau_{\mathrm{wait}},
+\tau_{\mathrm{detour}}
+\}.
+\]
+
+其中分别对应：
+
+\begin{itemize}
+    \item 直接飞行；
+    \item 等待禁飞区结束；
+    \item 绕行禁飞区。
+\end{itemize}
+
+通过该函数可将动态禁飞约束嵌入多无人机路径优化模型。
+
+\section{模型优势}
+
+相比时间离散采样方法，本模型：
+
+\begin{enumerate}
+    \item 不存在时间步长导致的漏检问题；
+    \item 通过解析求交获得精确冲突时间；
+    \item 每条航段仅需常数次计算；
+    \item 适合嵌入启发式或精确优化算法。
+\end{enumerate}
+
+\end{document}
